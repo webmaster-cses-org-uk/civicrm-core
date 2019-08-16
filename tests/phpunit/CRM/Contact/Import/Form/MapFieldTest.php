@@ -221,7 +221,9 @@ document.forms.MapField['mapper[1][3]'].style.display = 'none';\n",
     $dataPatterns = [];
     $columnPatterns = [];
 
-    $return = $form->loadSavedMapping($mappingName, $columnNumber, $mappingRelation, $mappingWebsiteType, $mappingLocation, $mappingPhoneType, $mappingImProvider, $defaults, $formName, $js, $hasColumnNames, $dataPatterns, $columnPatterns);
+    $processor = new  CRM_Import_ImportProcessor();
+    $processor->setMappingID($mappingID);
+    $return = $form->loadSavedMapping($processor, $mappingName, $columnNumber, $mappingRelation, $mappingWebsiteType, $mappingLocation, $mappingPhoneType, $mappingImProvider, $defaults, $formName, $js, $hasColumnNames, $dataPatterns, $columnPatterns);
     return ['defaults' => $return[0], 'js' => $return[1]];
   }
 
