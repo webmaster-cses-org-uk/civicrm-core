@@ -166,8 +166,8 @@ class CRM_Contact_Import_Form_MapFieldTest extends CiviUnitTestCase {
     $form->set('contactType', CRM_Import_Parser::CONTACT_INDIVIDUAL);
 
     $mapping = $this->callAPISuccess('Mapping', 'create', ['name' => 'my test']);
-    $this->callAPISuccess('MappingField', 'create', array_merge(['mapping_id' => $mapping], $fieldSpec));
-    $result = $this->loadSavedMapping($form, $mapping['id'], 1);
+    $this->callAPISuccess('MappingField', 'create', array_merge(['mapping_id' => $mapping['id']], $fieldSpec));
+    $result = $this->loadSavedMapping($form, $mapping['id'], $fieldSpec['column_number']);
     $this->assertEquals($expectedJS, $result['js']);
   }
 
@@ -178,10 +178,13 @@ class CRM_Contact_Import_Form_MapFieldTest extends CiviUnitTestCase {
     return [
       [
         ['name' => 'First Name', 'contact_type' => 'Individual', 'column_number' => 1],
-        'document.forms.MapField[\'mapper[1][1]\'].style.display = \'none\';
-document.forms.MapField[\'mapper[1][2]\'].style.display = \'none\';
-document.forms.MapField[\'mapper[1][3]\'].style.display = \'none\';
-',
+        "document.forms.MapField['mapper[1][1]'].style.display = 'none';
+document.forms.MapField['mapper[1][2]'].style.display = 'none';
+document.forms.MapField['mapper[1][3]'].style.display = 'none';\n",
+      ],
+      [
+        ['name' => 'Phone', 'contact_type' => 'Individual', 'column_number' => 8, 'phone_type_id' => 1, 'location_type_id' => 2],
+        "document.forms.MapField['mapper[8][3]'].style.display = 'none';\n",
       ],
     ];
   }
