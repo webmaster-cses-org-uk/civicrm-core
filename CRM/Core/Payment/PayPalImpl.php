@@ -502,6 +502,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
    * @throws \Civi\Payment\Exception\PaymentProcessorException
    */
   public function doPayment(&$params, $component = 'contribute') {
+    $this->inputParams = $params;
     if ($this->isPayPalType($this::PAYPAL_EXPRESS) || ($this->isPayPalType($this::PAYPAL_PRO) && !empty($params['token']))) {
       $this->_component = $component;
       return $this->doExpressCheckout($params);
@@ -530,7 +531,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
     $args['paymentAction'] = 'Sale';
     $args['amt'] = $this->getAmount($params);
     $args['currencyCode'] = $this->getCurrency($params);
-    $args['invnum'] = $params['invoiceID'];
+    $args['invnum'] = $this->getInvoiceID();
     $args['ipaddress'] = $params['ip_address'];
     $args['creditCardType'] = $params['credit_card_type'];
     $args['acct'] = $params['credit_card_number'];
@@ -568,10 +569,10 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
       $args['totalbillingcycles'] = CRM_Utils_Array::value('installments', $params);
       $args['version'] = 56.0;
       $args['PROFILEREFERENCE'] = "" .
-        "i=" . $params['invoiceID'] . "&m=" . $component .
-        "&c=" . $params['contactID'] . "&r=" . $params['contributionRecurID'] .
+        "i=" . $this->getInvoiceID() . "&m=" . $component .
+        "&c=" . $this->getContactID() . "&r=" . $this->getContributionRecurID() .
         // @todo use $this->getContributionID();
-        "&b=" . $params['contributionID'] . "&p=" . $params['contributionPageID'];
+        "&b=" . $this->getContributionID() . "&p=" . $params['contributionPageID'];
     }
 
     // Allow further manipulation of the arguments via custom hooks ..
@@ -584,7 +585,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
       return $result;
     }
 
-    $params['recurr_profile_id'] = NULL;
+    $params['recur_profile_id'] = NULL;
 
     if (CRM_Utils_Array::value('is_recur', $params) == 1) {
       $params['recurr_profile_id'] = $result['profileid'];
