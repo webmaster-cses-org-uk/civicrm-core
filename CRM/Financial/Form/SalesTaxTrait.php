@@ -48,7 +48,6 @@ trait CRM_Financial_Form_SalesTaxTrait {
    * Assign information to the template required for sales tax purposes.
    */
   public function assignSalesTaxMetadataToTemplate() {
-    $this->assignSalesTaxRates();
     $this->assignSalesTaxTermToTemplate();
   }
 

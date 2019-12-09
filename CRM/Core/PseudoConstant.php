@@ -1504,6 +1504,7 @@ WHERE  id = %1
    *
    * @return array
    *   array list of tax rates with the financial type
+   * @throws \CiviCRM_API3_Exception
    */
   public static function getTaxRates() {
     if (!isset(Civi::$statics[__CLASS__]['taxRates'])) {

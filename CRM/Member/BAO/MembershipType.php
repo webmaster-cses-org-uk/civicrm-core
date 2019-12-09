@@ -832,6 +832,12 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType {
          if (isset($type['contribution_type_id'])) {
            unset($types[$id]['contribution_type_id']);
          }
+         $types[$id]['tax_rate'] = (float) CRM_Core_PseudoConstant::getTaxRates()[$type['financial_type_id']];
+         $multiplier = 1;
+         if ($types[$id]['tax_rate'] !== 0.0 ) {
+           $multiplier += ($types[$id]['tax_rate'] / 100);
+         }
+         $types[$id]['minimum_fee_with_tax'] = $types[$id]['minimum_fee'] * $multiplier;
        }
        Civi::cache('metadata')->set(__CLASS__ . __FUNCTION__, $types);
     }

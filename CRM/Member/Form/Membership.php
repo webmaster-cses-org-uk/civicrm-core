@@ -513,6 +513,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form {
         'financial_type_id' => CRM_Utils_Array::value('financial_type_id', $values),
         'total_amount' => CRM_Utils_Money::format($totalAmount, NULL, '%a'),
         'total_amount_numeric' => $totalAmount,
+        'total_amount_with_tax' => !empty($this->_submitValues['total_amount']) ? $this->_submitValues['total_amount'] : $values['minimum_fee_with_tax'],
+        'tax_rate' => $values['tax_rate'],
         'auto_renew' => CRM_Utils_Array::value('auto_renew', $values),
         'has_related' => isset($values['relationship_type_id']),
         'max_related' => CRM_Utils_Array::value('max_related', $values),

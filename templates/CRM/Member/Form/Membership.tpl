@@ -276,9 +276,8 @@
         // skip this for test and live modes because financial type is set automatically
         cj("#financial_type_id").val(allMemberships[memType]['financial_type_id']);
         var term = cj('#num_terms').val();
-        var taxRates = {/literal}{$taxRates}{literal};
         var taxTerm = {/literal}{$taxTerm|@json_encode}{literal};
-        var taxRate = taxRates[allMemberships[memType]['financial_type_id']];
+        var taxRate = allMemberships[memType]['tax_rate'];
         var currency = {/literal}{$currency|@json_encode}{literal};
         var taxAmount = (taxRate/100)*allMemberships[memType]['total_amount_numeric'];
         taxAmount = isNaN (taxAmount) ? 0:taxAmount;
