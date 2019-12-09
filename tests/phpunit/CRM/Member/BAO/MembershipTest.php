@@ -916,6 +916,8 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
 
   /**
    * Test the buildMembershipTypeValues function.
+   *
+   * @throws \CiviCRM_API3_Exception
    */
   public function testBuildMembershipTypeValues() {
     $form = new CRM_Core_Form();
@@ -936,6 +938,9 @@ class CRM_Member_BAO_MembershipTest extends CiviUnitTestCase {
           'max_related' => NULL,
           'duration_unit' => 'year',
           'duration_interval' => '1',
+          'domain_id' => '1',
+          'period_type' => 'rolling',
+          'visibility' => 'Public',
         ],
     ], $values);
   }
