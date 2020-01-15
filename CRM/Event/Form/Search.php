@@ -362,9 +362,9 @@ class CRM_Event_Form_Search extends CRM_Core_Form_Search {
     }
 
     $this->_done = TRUE;
-    $formValues = $this->getFormValues();
+    $this->setFormValues();
 
-    $this->submit($formValues);
+    $this->submit($this->_formValues);
   }
 
   /**
