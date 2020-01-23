@@ -235,7 +235,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration {
           /*CRM-16320 */
           $individual[$k]['totalAmtWithTax'] = $this->_amount[$k]['amount'];
           $individual[$k]['totalTaxAmt'] = $individualTaxAmount + $v['tax_amount'];
-          $this->_totalAmount = $this->_totalAmount + $this->_amount[$k]['amount'];
+          $this->_totalAmount = $this->_totalAmount + (float) $this->_amount[$k]['amount'];
           if (!empty($v['is_primary'])) {
             $this->set('primaryParticipantAmount', $this->_amount[$k]['amount']);
           }
