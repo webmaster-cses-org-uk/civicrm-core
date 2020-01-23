@@ -1004,6 +1004,12 @@ class CRM_Event_Form_Participant extends CRM_Contribute_Form_AbstractEditPayment
 
     $this->_params = $params;
     parent::beginPostProcess();
+    $contributionParams['total_amount'] = $this->isPaymentOnExistingContribution() ? $this->getParticipantValue('fee_amount') : $params['amount'];
+    // overwrite actual payment amount if entered - this appears to only be an option when using the record_contribution
+    // form so not when it is a payment on an existing contribution?
+    if (!empty($params['total_amount'])) {
+      $contributionParams['total_amount'] = CRM_Utils_Array::value('total_amount', $params);
+    }
     $amountOwed = NULL;
     if (isset($params['amount'])) {
       $amountOwed = $params['amount'];
@@ -1011,10 +1017,6 @@ class CRM_Event_Form_Participant extends CRM_Contribute_Form_AbstractEditPayment
     }
     $params['contact_id'] = $this->_contactId;
 
-    // overwrite actual payment amount if entered
-    if (!empty($params['total_amount'])) {
-      $contributionParams['total_amount'] = CRM_Utils_Array::value('total_amount', $params);
-    }
 
     // Retrieve the name and email of the current user - this will be the FROM for the receipt email
     $userName = CRM_Core_Session::singleton()->getLoggedInContactDisplayName();
@@ -1826,8 +1828,6 @@ class CRM_Event_Form_Participant extends CRM_Contribute_Form_AbstractEditPayment
       }
     }
     if ($this->isPaymentOnExistingContribution()) {
-      $contributionParams['total_amount'] = $this->getParticipantValue('fee_amount');
-
       $params['discount_id'] = NULL;
       //re-enter the values for UPDATE mode
       $params['fee_level'] = $params['amount_level'] = $this->getParticipantValue('fee_level');
@@ -1871,7 +1871,6 @@ class CRM_Event_Form_Participant extends CRM_Contribute_Form_AbstractEditPayment
       }
 
       $params['fee_level'] = $params['amount_level'];
-      $contributionParams['total_amount'] = $params['amount'];
       if ($this->_quickConfig && !empty($params['total_amount']) &&
         $params['status_id'] != array_search('Partially paid', $participantStatus)
       ) {
