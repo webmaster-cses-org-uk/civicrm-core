@@ -1017,10 +1017,6 @@ class CRM_Event_Form_Participant extends CRM_Contribute_Form_AbstractEditPayment
     }
     $params['contact_id'] = $this->_contactId;
 
-
-    // Retrieve the name and email of the current user - this will be the FROM for the receipt email
-    $userName = CRM_Core_Session::singleton()->getLoggedInContactDisplayName();
-
     if ($this->_contactId) {
       list($this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail) = CRM_Contact_BAO_Contact::getContactDetails($this->_contactId);
     }
@@ -1035,16 +1031,7 @@ class CRM_Event_Form_Participant extends CRM_Contribute_Form_AbstractEditPayment
     $now = date('YmdHis');
 
     if ($this->_mode) {
-      // set source if not set
-      if (empty($params['source'])) {
-        $this->_params['participant_source'] = ts('Offline Registration for Event: %2 by: %1', [
-          1 => $userName,
-          2 => $this->getEventValue('title'),
-        ]);
-      }
-      else {
-        $this->_params['participant_source'] = $params['source'];
-      }
+      $this->_params['participant_source'] = $this->getParticipantSourceValue($params);
       $this->_params['description'] = $this->_params['participant_source'];
 
       $this->_paymentProcessor = CRM_Financial_BAO_PaymentProcessor::getPayment($this->_params['payment_processor_id'],
@@ -1265,15 +1252,7 @@ class CRM_Event_Form_Participant extends CRM_Contribute_Form_AbstractEditPayment
 
         //build contribution params
         if (!$this->_onlinePendingContributionId) {
-          if (empty($params['source'])) {
-            $contributionParams['source'] = ts('%1 : Offline registration (by %2)', [
-              1 => $this->getEventValue('title'),
-              2 => $userName,
-            ]);
-          }
-          else {
-            $contributionParams['source'] = $params['source'];
-          }
+          $contributionParams['source'] = $this->getParticipantSourceValue($params);
         }
 
         $contributionParams['currency'] = $config->defaultCurrency;
@@ -2212,6 +2191,23 @@ class CRM_Event_Form_Participant extends CRM_Contribute_Form_AbstractEditPayment
    */
   protected function getParticipantID() {
     return $this->_id;
+  }
+
+  /**
+   * @param array $params
+   *
+   * @return string
+   *
+   * @throws \CiviCRM_API3_Exception
+   */
+  protected function getParticipantSourceValue($params): string{
+    if (empty($params['source'])) {
+      return ts('Offline Registration for Event: %2 by: %1', [
+        1 => CRM_Core_Session::singleton()->getLoggedInContactDisplayName(),
+        2 => $this->getEventValue('title'),
+      ]);
+    }
+    return $params['source'];
   }
 
 }
