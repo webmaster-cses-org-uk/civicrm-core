@@ -38,14 +38,13 @@ class CRM_Utils_Money {
    * @param string $format
    *   The desired currency format.
    * @param bool $onlyNumber
-   * @param string $valueFormat
-   *   The desired monetary value display format (e.g. '%!i').
    *
    * @return string
    *   formatted monetary string
    *
+   * @throws \CRM_Core_Exception
    */
-  public static function format($amount, $currency = NULL, $format = NULL, $onlyNumber = FALSE, $valueFormat = NULL) {
+  public static function format($amount, $currency = NULL, $format = NULL, $onlyNumber = FALSE) {
 
     if (CRM_Utils_System::isNull($amount)) {
       return '';
@@ -57,16 +56,9 @@ class CRM_Utils_Money {
       $format = $config->moneyformat;
     }
 
-    if (!$valueFormat) {
-      $valueFormat = $config->moneyvalueformat;
-    }
-
     if ($onlyNumber) {
-      // money_format() exists only in certain PHP install (CRM-650)
-      if (is_numeric($amount) and function_exists('money_format')) {
-        $amount = money_format($valueFormat, $amount);
-      }
-      return $amount;
+      // Ideally call formatNumeric  directly & ditch this param.
+      return self::formatNumeric($amount);
     }
 
     if (!self::$_currencySymbols) {
@@ -86,7 +78,7 @@ class CRM_Utils_Money {
       throw new CRM_Core_Exception("Invalid currency \"{$currency}\"");
     }
 
-    $amount = self::formatNumericByFormat($amount, $valueFormat);
+    $amount = self::formatNumeric($amount);
     // If it contains tags, means that HTML was passed and the
     // amount is already converted properly,
     // so don't mess with it again.
@@ -180,7 +172,7 @@ class CRM_Utils_Money {
    * @return string
    */
   protected static function formatLocaleNumeric($amount) {
-    return self::formatNumericByFormat($amount, CRM_Core_Config::singleton()->moneyvalueformat);
+    return self::formatNumeric($amount, CRM_Core_Config::singleton()->moneyvalueformat);
   }
 
   /**
@@ -253,17 +245,17 @@ class CRM_Utils_Money {
    * rounding.
    *
    * @param string $amount
-   * @param string $valueFormat
    *
    * @return string
    */
-  protected static function formatNumericByFormat($amount, $valueFormat) {
+  public static function formatNumeric($amount) {
     // money_format() exists only in certain PHP install (CRM-650)
     // setlocale() affects native gettext (CRM-11054, CRM-9976)
     if (is_numeric($amount) && function_exists('money_format')) {
       $lc = setlocale(LC_MONETARY, 0);
       setlocale(LC_MONETARY, 'en_US.utf8', 'en_US', 'en_US.utf8', 'en_US', 'C');
-      $amount = money_format($valueFormat, $amount);
+      $formatter = new NumberFormatter('en_US', NumberFormatter::DECIMAL);
+      $amount = $formatter->format($amount);
       setlocale(LC_MONETARY, $lc);
     }
     return $amount;
