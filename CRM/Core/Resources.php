@@ -751,6 +751,15 @@ class CRM_Core_Resources {
         ],
       ];
     }
+    if ($editor === "CKEditor5") {
+      CRM_Admin_Page_CKEditorConfig::setConfigDefault();
+      $items[] = [
+        'config' => [
+          'wysisygScriptLocation' => Civi::paths()->getUrl("[civicrm.root]/js/wysiwyg/crm.ckeditor5.js"),
+          //'CKEditorCustomConfig' => CRM_Admin_Page_CKEditorConfig::getConfigUrl(),
+        ],
+      ];
+    }
 
     // These scripts are only needed by back-office users
     if (CRM_Core_Permission::check('access CiviCRM')) {

@@ -255,6 +255,7 @@ if (!CRM.vars) CRM.vars = {};
         window.jQuery = CRM.$;
       }
       script.src = src;
+      script.type = 'module';
       document.getElementsByTagName("head")[0].appendChild(script);
     }
     return scriptsLoaded[url];
