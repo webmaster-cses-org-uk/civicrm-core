@@ -20,5 +20,8 @@
   "scripts": {
     "postinstall": "bash tools/scripts/npm/postinstall.sh",
     "test": "bash tools/scripts/npm/test.sh"
+  },
+  "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^16.0.0"
   }
 }
