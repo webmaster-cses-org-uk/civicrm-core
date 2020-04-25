@@ -605,7 +605,15 @@ class CRM_Core_DAO extends DB_DataObject {
    */
   public function delete($useWhere = FALSE) {
     $preEvent = new \Civi\Core\DAO\Event\PreDelete($this);
-    \Civi::dispatcher()->dispatch("civi.dao.preDelete", $preEvent);
+    try {
+      \Civi::dispatcher()->dispatch('civi.dao.preDelete', $preEvent);
+    }
+    catch (CRM_Core_Exception_AbortActionException $e) {
+      if (!empty($e->getErrorData()['user_message'])) {
+        CRM_Core_Session::setStatus($e->getErrorData()['user_alert_level'], $e->getErrorData()['user_message']);
+      }
+      return 0;
+    }
 
     $result = parent::delete($useWhere);
 
