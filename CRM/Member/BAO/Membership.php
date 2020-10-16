@@ -249,7 +249,8 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership {
     // To skip status calculation we should use 'skipStatusCal'.
     // eg pay later membership, membership update cron CRM-3984
 
-    if (empty($params['is_override']) && empty($params['skipStatusCal'])) {
+    if (empty($params['is_override']) && empty($params['skipStatusCal'])
+      && !isset($params['status_id'])) {
       // @todo - we should be able to count on dates being correctly formatted by they time they hit the BAO.
       // Maybe do some tests & throw some deprecation warnings if they aren't?
       $params['start_date'] = trim($params['start_date']) ? date('Ymd', strtotime(trim($params['start_date']))) : 'null';
